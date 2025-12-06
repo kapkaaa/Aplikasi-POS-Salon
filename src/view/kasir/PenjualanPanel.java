@@ -10,7 +10,7 @@ import javax.swing.table.*;
 import javax.swing.border.*;
 
 /**
- * Panel Penjualan - Versi Final (Full Width, Rapi, Warna Sesuai)
+ * Panel Penjualan - Versi Final + Fitur Edit Qty via Dialog Input
  */
 public class PenjualanPanel extends JPanel {
 
@@ -21,7 +21,6 @@ public class PenjualanPanel extends JPanel {
     private JComboBox<String> cmbItem;
     private JTextField txtQuantity;
     private JTextField txtHarga;
-//    private JTextField txtNamaPelanggan;
     private JComboBox<String> cmbMetodePembayaran;
     private JTextField txtUangDibayar;
     private JLabel lblKembalian;
@@ -57,7 +56,7 @@ public class PenjualanPanel extends JPanel {
         mainContent.setBackground(Color.WHITE);
         mainContent.setBorder(BorderFactory.createEmptyBorder(0, 20, 20, 20));
 
-        // === LEFT PANEL - Input Transaksi (GridBagLayout) ===
+        // === LEFT PANEL - Input Transaksi ===
         JPanel leftPanel = new JPanel(new GridBagLayout());
         leftPanel.setBackground(Color.WHITE);
         leftPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -70,24 +69,15 @@ public class PenjualanPanel extends JPanel {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
-        gbc.insets = new Insets(0, 0, 10, 0); // bottom margin
+        gbc.insets = new Insets(0, 0, 10, 0);
 
-        // Title "Input Transaksi" - DIPINDAH KE ATAS
         JLabel lblInputTitle = new JLabel("Input Transaksi");
         lblInputTitle.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lblInputTitle.setForeground(new Color(52, 152, 219));
         leftPanel.add(lblInputTitle, gbc);
-        gbc.gridy++; // naik ke baris berikutnya
-        gbc.insets = new Insets(5, 0, 5, 0); // reset insets
+        gbc.gridy++;
+        gbc.insets = new Insets(5, 0, 5, 0);
 
-        // Nama Pelanggan
-//        leftPanel.add(createLabel("Nama Pelanggan (Opsional)"), gbc);
-//        gbc.gridy++;
-//        txtNamaPelanggan = createTextField();
-//        leftPanel.add(txtNamaPelanggan, gbc);
-//        gbc.gridy++;
-
-        // Jenis Transaksi
         leftPanel.add(createLabel("Jenis Transaksi *"), gbc);
         gbc.gridy++;
         cmbJenisTransaksi = createComboBox(new String[]{"- Pilih -", "Barang", "Layanan"});
@@ -95,7 +85,6 @@ public class PenjualanPanel extends JPanel {
         leftPanel.add(cmbJenisTransaksi, gbc);
         gbc.gridy++;
 
-        // Pilih Item
         leftPanel.add(createLabel("Pilih Item *"), gbc);
         gbc.gridy++;
         cmbItem = createComboBox(new String[]{});
@@ -103,7 +92,6 @@ public class PenjualanPanel extends JPanel {
         leftPanel.add(cmbItem, gbc);
         gbc.gridy++;
 
-        // Jumlah & Harga Satuan (Side by Side)
         JPanel qtyHargaPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         qtyHargaPanel.setOpaque(false);
 
@@ -132,11 +120,10 @@ public class PenjualanPanel extends JPanel {
         leftPanel.add(qtyHargaPanel, gbc);
         gbc.gridy++;
 
-        // Tombol Tambah ke Keranjang
         gbc.insets = new Insets(15, 0, 15, 0);
         JButton btnTambah = new JButton("➕ Tambah ke Keranjang");
         btnTambah.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        btnTambah.setBackground(new Color(46, 204, 113)); // Hijau muda
+        btnTambah.setBackground(new Color(46, 204, 113));
         btnTambah.setForeground(new Color(46, 204, 113));
         btnTambah.setFocusPainted(false);
         btnTambah.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -145,12 +132,10 @@ public class PenjualanPanel extends JPanel {
         gbc.gridy++;
         gbc.insets = new Insets(5, 0, 5, 0);
 
-        // Separator
         JSeparator sep1 = new JSeparator();
         leftPanel.add(sep1, gbc);
         gbc.gridy++;
 
-        // Metode Pembayaran
         leftPanel.add(createLabel("Metode Pembayaran *"), gbc);
         gbc.gridy++;
         cmbMetodePembayaran = createComboBox(new String[]{"Cash", "QRIS"});
@@ -164,7 +149,6 @@ public class PenjualanPanel extends JPanel {
         leftPanel.add(cmbMetodePembayaran, gbc);
         gbc.gridy++;
 
-        // Uang Dibayar
         leftPanel.add(createLabel("Uang Dibayar"), gbc);
         gbc.gridy++;
         txtUangDibayar = createTextField();
@@ -181,7 +165,6 @@ public class PenjualanPanel extends JPanel {
         leftPanel.add(txtUangDibayar, gbc);
         gbc.gridy++;
 
-        // Kembalian
         leftPanel.add(createLabel("Kembalian"), gbc);
         gbc.gridy++;
         lblKembalian = new JLabel("Rp 0");
@@ -190,11 +173,10 @@ public class PenjualanPanel extends JPanel {
         leftPanel.add(lblKembalian, gbc);
         gbc.gridy++;
 
-        // Tombol Proses Transaksi
         gbc.insets = new Insets(15, 0, 0, 0);
         JButton btnProses = new JButton("💾 Proses Transaksi");
         btnProses.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        btnProses.setBackground(new Color(52, 152, 219)); // Biru
+        btnProses.setBackground(new Color(52, 152, 219));
         btnProses.setForeground(new Color(52, 152, 219));
         btnProses.setFocusPainted(false);
         btnProses.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -203,7 +185,7 @@ public class PenjualanPanel extends JPanel {
 
         mainContent.add(leftPanel);
 
-        // === RIGHT PANEL - Keranjang Belanja (GridBagLayout - FULL WIDTH) ===
+        // === RIGHT PANEL - Keranjang Belanja ===
         JPanel rightPanel = new JPanel(new GridBagLayout());
         rightPanel.setBackground(Color.WHITE);
         rightPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -218,7 +200,6 @@ public class PenjualanPanel extends JPanel {
         gbcRight.weightx = 1.0;
         gbcRight.insets = new Insets(0, 0, 10, 0);
 
-        // Title
         JLabel lblKeranjangTitle = new JLabel("Keranjang Belanja");
         lblKeranjangTitle.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lblKeranjangTitle.setForeground(new Color(52, 152, 219));
@@ -226,7 +207,6 @@ public class PenjualanPanel extends JPanel {
         gbcRight.gridy++;
         gbcRight.insets = new Insets(5, 0, 5, 0);
 
-        // Table
         String[] columns = {"Nama Item", "Qty", "Harga", "Subtotal"};
         modelKeranjang = new DefaultTableModel(columns, 0) {
             @Override 
@@ -246,6 +226,16 @@ public class PenjualanPanel extends JPanel {
         header.setForeground(new Color(52, 73, 94));
         header.setPreferredSize(new Dimension(header.getPreferredSize().width, 35));
 
+        // Double-click untuk edit qty
+        tableKeranjang.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    editQty();
+                }
+            }
+        });
+
         JScrollPane scrollTable = new JScrollPane(tableKeranjang);
         scrollTable.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220), 1));
         scrollTable.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -257,39 +247,46 @@ public class PenjualanPanel extends JPanel {
         gbcRight.weighty = 0.0;
         gbcRight.insets = new Insets(10, 0, 10, 0);
 
-        // Tombol Hapus & Clear
+        // Tombol di bawah tabel
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         btnPanel.setOpaque(false);
         btnPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
 
         JButton btnHapus = new JButton("🗑️ Hapus Item");
         btnHapus.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        btnHapus.setBackground(new Color(231, 76, 60)); // Merah
+        btnHapus.setBackground(new Color(231, 76, 60));
         btnHapus.setForeground(new Color(231, 76, 60));
         btnHapus.setFocusPainted(false);
         btnHapus.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnHapus.addActionListener(e -> hapusItem());
 
+        JButton btnEditQty = new JButton("✏️ Edit Qty");
+        btnEditQty.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        btnEditQty.setBackground(new Color(52, 152, 219));
+        btnEditQty.setForeground(new Color(52, 152, 219));
+        btnEditQty.setFocusPainted(false);
+        btnEditQty.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnEditQty.addActionListener(e -> editQty());
+
         JButton btnClear = new JButton("🔄 Clear");
         btnClear.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        btnClear.setBackground(new Color(149, 165, 166)); // Biru tua
+        btnClear.setBackground(new Color(149, 165, 166));
         btnClear.setForeground(new Color(149, 165, 166));
         btnClear.setFocusPainted(false);
         btnClear.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnClear.addActionListener(e -> clearKeranjang());
 
         btnPanel.add(btnHapus);
+        btnPanel.add(btnEditQty);
         btnPanel.add(btnClear);
         rightPanel.add(btnPanel, gbcRight);
         gbcRight.gridy++;
         gbcRight.insets = new Insets(10, 0, 10, 0);
 
-        // Separator
         JSeparator sep2 = new JSeparator();
         rightPanel.add(sep2, gbcRight);
         gbcRight.gridy++;
 
-        // Total
         JPanel totalPanel = new JPanel(new BorderLayout());
         totalPanel.setOpaque(false);
         totalPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
@@ -307,7 +304,6 @@ public class PenjualanPanel extends JPanel {
         rightPanel.add(totalPanel, gbcRight);
 
         mainContent.add(rightPanel);
-
         add(mainContent, BorderLayout.CENTER);
     }
 
@@ -344,19 +340,13 @@ public class PenjualanPanel extends JPanel {
         cmbItem.removeAllItems();
         txtHarga.setText("");
         
-        if (jenis.equals("- Pilih -")) {
-            return;
-        }
+        if (jenis.equals("- Pilih -")) return;
         
         try {
             Connection conn = Koneksi.getKoneksi();
-            String sql = "";
-            
-            if (jenis.equals("Barang")) {
-                sql = "SELECT id_barang, nama_barang, stok FROM tb_barang WHERE status = 'Tersedia' AND stok > 0 ORDER BY nama_barang";
-            } else {
-                sql = "SELECT id_layanan, nama_layanan FROM tb_layanan WHERE status = 'Tersedia' ORDER BY nama_layanan";
-            }
+            String sql = jenis.equals("Barang") 
+                ? "SELECT id_barang, nama_barang, stok FROM tb_barang WHERE status = 'Tersedia' AND stok > 0 ORDER BY nama_barang"
+                : "SELECT id_layanan, nama_layanan FROM tb_layanan WHERE status = 'Tersedia' ORDER BY nama_layanan";
             
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(sql);
@@ -365,16 +355,13 @@ public class PenjualanPanel extends JPanel {
             
             while (rs.next()) {
                 if (jenis.equals("Barang")) {
-                    int stok = rs.getInt("stok");
-                    cmbItem.addItem(rs.getString("nama_barang") + " (Stok: " + stok + ")");
+                    cmbItem.addItem(rs.getString("nama_barang") + " (Stok: " + rs.getInt("stok") + ")");
                 } else {
                     cmbItem.addItem(rs.getString("nama_layanan"));
                 }
             }
             
-            rs.close();
-            st.close();
-            
+            rs.close(); st.close();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error load items: " + e.getMessage());
             e.printStackTrace();
@@ -393,13 +380,9 @@ public class PenjualanPanel extends JPanel {
         
         try {
             Connection conn = Koneksi.getKoneksi();
-            String sql = "";
-            
-            if (jenis.equals("Barang")) {
-                sql = "SELECT harga_jual, harga_beli FROM tb_barang WHERE nama_barang = ?";
-            } else {
-                sql = "SELECT harga_layanan FROM tb_layanan WHERE nama_layanan = ?";
-            }
+            String sql = jenis.equals("Barang")
+                ? "SELECT harga_jual, harga_beli FROM tb_barang WHERE nama_barang = ?"
+                : "SELECT harga_layanan FROM tb_layanan WHERE nama_layanan = ?";
             
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, namaItem);
@@ -410,9 +393,7 @@ public class PenjualanPanel extends JPanel {
                 txtHarga.setText("Rp " + String.format("%,.0f", harga));
             }
             
-            rs.close();
-            ps.close();
-            
+            rs.close(); ps.close();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error load harga: " + e.getMessage());
             e.printStackTrace();
@@ -421,7 +402,7 @@ public class PenjualanPanel extends JPanel {
     
     private void tambahKeKeranjang() {
         String jenis = (String) cmbJenisTransaksi.getSelectedItem();
-        if (jenis.equals("- Pilih -")) {
+        if ("- Pilih -".equals(jenis)) {
             JOptionPane.showMessageDialog(this, "Pilih jenis transaksi!", "Validasi", JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -459,7 +440,7 @@ public class PenjualanPanel extends JPanel {
             double hargaBeli = 0;
             int stokTersedia = 0;
             
-            if (jenis.equals("Barang")) {
+            if ("Barang".equals(jenis)) {
                 String sql = "SELECT id_barang, harga_jual, harga_beli, stok FROM tb_barang WHERE nama_barang = ?";
                 PreparedStatement ps = conn.prepareStatement(sql);
                 ps.setString(1, namaItem);
@@ -476,13 +457,11 @@ public class PenjualanPanel extends JPanel {
                             "Stok tidak mencukupi! Stok tersedia: " + stokTersedia, 
                             "Validasi", 
                             JOptionPane.WARNING_MESSAGE);
-                        rs.close();
-                        ps.close();
+                        rs.close(); ps.close();
                         return;
                     }
                 }
-                rs.close();
-                ps.close();
+                rs.close(); ps.close();
             } else {
                 String sql = "SELECT id_layanan, harga_layanan FROM tb_layanan WHERE nama_layanan = ?";
                 PreparedStatement ps = conn.prepareStatement(sql);
@@ -493,8 +472,7 @@ public class PenjualanPanel extends JPanel {
                     idItem = rs.getInt("id_layanan");
                     harga = rs.getDouble("harga_layanan");
                 }
-                rs.close();
-                ps.close();
+                rs.close(); ps.close();
             }
             
             ItemKeranjang item = new ItemKeranjang();
@@ -503,8 +481,8 @@ public class PenjualanPanel extends JPanel {
             item.namaItem = namaItem;
             item.quantity = quantity;
             item.harga = harga;
-            item.subtotal = quantity * harga;
             item.hargaBeli = hargaBeli;
+            item.subtotal = quantity * harga;
             
             keranjang.add(item);
             updateTableKeranjang();
@@ -542,11 +520,7 @@ public class PenjualanPanel extends JPanel {
     
     private void hitungKembalian() {
         try {
-            double total = 0;
-            for (ItemKeranjang item : keranjang) {
-                total += item.subtotal;
-            }
-
+            double total = keranjang.stream().mapToDouble(i -> i.subtotal).sum();
             String bayarStr = txtUangDibayar.getText().trim();
             if (bayarStr.isEmpty()) {
                 lblKembalian.setText("Rp 0");
@@ -564,7 +538,6 @@ public class PenjualanPanel extends JPanel {
                 lblKembalian.setForeground(new Color(46, 204, 113));
                 lblKembalian.setText("Rp " + String.format("%,.0f", kembalian));
             }
-
         } catch (NumberFormatException ex) {
             lblKembalian.setText("Input tidak valid");
             lblKembalian.setForeground(Color.RED);
@@ -577,15 +550,96 @@ public class PenjualanPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Pilih item yang akan dihapus!", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
         keranjang.remove(row);
         updateTableKeranjang();
     }
     
-    private void clearKeranjang() {
-        if (keranjang.isEmpty()) {
+    private void editQty() {
+        int row = tableKeranjang.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih item yang akan diubah jumlahnya!", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return;
         }
+
+        ItemKeranjang item = keranjang.get(row);
+        
+        String input = JOptionPane.showInputDialog(
+            this,
+            "Ubah jumlah untuk '" + item.namaItem + "':",
+            item.quantity
+        );
+
+        if (input == null || input.trim().isEmpty()) {
+            return;
+        }
+
+        int newQty;
+        try {
+            newQty = Integer.parseInt(input.trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Masukkan angka yang valid!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (newQty < 0) {
+            JOptionPane.showMessageDialog(this, "Jumlah tidak boleh negatif!", "Validasi", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        if (newQty == 0) {
+            int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Jumlah diubah menjadi 0. Hapus item dari keranjang?",
+                "Konfirmasi",
+                JOptionPane.YES_NO_OPTION
+            );
+            if (confirm == JOptionPane.YES_OPTION) {
+                keranjang.remove(row);
+            } else {
+                return;
+            }
+        } else {
+            if ("Barang".equals(item.jenis)) {
+                try {
+                    Connection conn = Koneksi.getKoneksi();
+                    String sql = "SELECT stok FROM tb_barang WHERE id_barang = ?";
+                    PreparedStatement ps = conn.prepareStatement(sql);
+                    ps.setInt(1, item.idItem);
+                    ResultSet rs = ps.executeQuery();
+                    if (rs.next()) {
+                        int stokTersedia = rs.getInt("stok");
+                        if (newQty > stokTersedia) {
+                            JOptionPane.showMessageDialog(this,
+                                "Stok tidak mencukupi!\nStok tersedia: " + stokTersedia,
+                                "Validasi",
+                                JOptionPane.WARNING_MESSAGE);
+                            rs.close();
+                            ps.close();
+                            return;
+                        }
+                    }
+                    rs.close();
+                    ps.close();
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(this, "Error cek stok: " + e.getMessage());
+                    e.printStackTrace();
+                    return;
+                }
+            }
+            item.quantity = newQty;
+            item.subtotal = newQty * item.harga;
+        }
+
+        updateTableKeranjang();
+        hitungKembalian();
+        
+        if (newQty > 0) {
+            JOptionPane.showMessageDialog(this, "Jumlah berhasil diubah!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+    
+    private void clearKeranjang() {
+        if (keranjang.isEmpty()) return;
         
         int confirm = JOptionPane.showConfirmDialog(this, 
             "Hapus semua item di keranjang?", 
@@ -604,15 +658,10 @@ public class PenjualanPanel extends JPanel {
             return;
         }
         
-//        String namaPelanggan = txtNamaPelanggan.getText().trim();
         String metodePembayaran = (String) cmbMetodePembayaran.getSelectedItem();
+        double totalHarga = keranjang.stream().mapToDouble(i -> i.subtotal).sum();
         
-        double totalHarga = 0;
-        for (ItemKeranjang item : keranjang) {
-            totalHarga += item.subtotal;
-        }
-        
-        if (metodePembayaran.equals("Cash")) {
+        if ("Cash".equals(metodePembayaran)) {
             String bayarStr = txtUangDibayar.getText().trim();
             if (bayarStr.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Masukkan uang dibayarkan!", "Validasi", JOptionPane.WARNING_MESSAGE);
@@ -636,21 +685,9 @@ public class PenjualanPanel extends JPanel {
             }
         }
         
-        boolean adaBarang = false;
-        boolean adaLayanan = false;
-        for (ItemKeranjang item : keranjang) {
-            if (item.jenis.equals("Barang")) adaBarang = true;
-            if (item.jenis.equals("Layanan")) adaLayanan = true;
-        }
-        
-        String jenisTransaksi = "";
-        if (adaBarang && adaLayanan) {
-            jenisTransaksi = "Keduanya";
-        } else if (adaBarang) {
-            jenisTransaksi = "Barang";
-        } else {
-            jenisTransaksi = "Layanan";
-        }
+        boolean adaBarang = keranjang.stream().anyMatch(i -> "Barang".equals(i.jenis));
+        boolean adaLayanan = keranjang.stream().anyMatch(i -> "Layanan".equals(i.jenis));
+        String jenisTransaksi = (adaBarang && adaLayanan) ? "Keduanya" : (adaBarang ? "Barang" : "Layanan");
         
         try {
             Connection conn = Koneksi.getKoneksi();
@@ -658,29 +695,22 @@ public class PenjualanPanel extends JPanel {
             
             String noTransaksi = generateNoTransaksi(conn);
             
-            String sqlHeader = "INSERT INTO tb_transaksi (no_transaksi, id_kasir, jenis_transaksi, metode_pembayaran, total_harga) " +
-                               "VALUES (?, ?, ?, ?, ?)";
+            String sqlHeader = "INSERT INTO tb_transaksi (no_transaksi, id_kasir, jenis_transaksi, metode_pembayaran, total_harga) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement psHeader = conn.prepareStatement(sqlHeader, Statement.RETURN_GENERATED_KEYS);
             psHeader.setString(1, noTransaksi);
             psHeader.setInt(2, idKasir);
             psHeader.setString(3, jenisTransaksi);
             psHeader.setString(4, metodePembayaran);
             psHeader.setDouble(5, totalHarga);
-//            psHeader.setString(6, namaPelanggan.isEmpty() ? null : namaPelanggan);
             psHeader.executeUpdate();
             
             ResultSet rsKey = psHeader.getGeneratedKeys();
-            int idTransaksi = 0;
-            if (rsKey.next()) {
-                idTransaksi = rsKey.getInt(1);
-            }
-            rsKey.close();
-            psHeader.close();
+            int idTransaksi = rsKey.next() ? rsKey.getInt(1) : 0;
+            rsKey.close(); psHeader.close();
             
             for (ItemKeranjang item : keranjang) {
-                if (item.jenis.equals("Barang")) {
-                    String sqlDetail = "INSERT INTO tb_detail_transaksi_barang (id_transaksi, id_barang, quantity, harga_satuan, harga_beli, subtotal) " +
-                                       "VALUES (?, ?, ?, ?, ?, ?)";
+                if ("Barang".equals(item.jenis)) {
+                    String sqlDetail = "INSERT INTO tb_detail_transaksi_barang (id_transaksi, id_barang, quantity, harga_satuan, harga_beli, subtotal) VALUES (?, ?, ?, ?, ?, ?)";
                     PreparedStatement psDetail = conn.prepareStatement(sqlDetail);
                     psDetail.setInt(1, idTransaksi);
                     psDetail.setInt(2, item.idItem);
@@ -691,8 +721,7 @@ public class PenjualanPanel extends JPanel {
                     psDetail.executeUpdate();
                     psDetail.close();
                 } else {
-                    String sqlDetail = "INSERT INTO tb_detail_transaksi_layanan (id_transaksi, id_layanan, quantity, harga_satuan, subtotal) " +
-                                       "VALUES (?, ?, ?, ?, ?)";
+                    String sqlDetail = "INSERT INTO tb_detail_transaksi_layanan (id_transaksi, id_layanan, quantity, harga_satuan, subtotal) VALUES (?, ?, ?, ?, ?)";
                     PreparedStatement psDetail = conn.prepareStatement(sqlDetail);
                     psDetail.setInt(1, idTransaksi);
                     psDetail.setInt(2, item.idItem);
@@ -719,8 +748,7 @@ public class PenjualanPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Error transaksi: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
             try {
-                Connection conn = Koneksi.getKoneksi();
-                conn.rollback();
+                Koneksi.getKoneksi().rollback();
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
@@ -729,25 +757,17 @@ public class PenjualanPanel extends JPanel {
     
     private String generateNoTransaksi(Connection conn) throws SQLException {
         String tglNow = new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date());
-        
         String sql = "SELECT COUNT(*) + 1 as counter FROM tb_transaksi WHERE DATE(tgl_transaksi) = CURDATE()";
         Statement st = conn.createStatement();
         ResultSet rs = st.executeQuery(sql);
-        
-        int counter = 1;
-        if (rs.next()) {
-            counter = rs.getInt("counter");
-        }
-        rs.close();
-        st.close();
-        
+        int counter = rs.next() ? rs.getInt("counter") : 1;
+        rs.close(); st.close();
         return "TRX-" + tglNow + "-" + String.format("%04d", counter);
     }
     
     private void tampilkanStruk(int idTransaksi) {
         try {
             Connection conn = Koneksi.getKoneksi();
-            
             String sql = "SELECT * FROM tb_transaksi WHERE id_transaksi = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, idTransaksi);
@@ -765,17 +785,13 @@ public class PenjualanPanel extends JPanel {
                 );
                 struk.setVisible(true);
             }
-            
-            rs.close();
-            ps.close();
-            
+            rs.close(); ps.close();
         } catch (SQLException e) {
             e.printStackTrace();    
         }
     }
     
     private void resetForm() {
-//        txtNamaPelanggan.setText("");
         cmbJenisTransaksi.setSelectedIndex(0);
         cmbItem.removeAllItems();
         txtQuantity.setText("1");
@@ -788,13 +804,14 @@ public class PenjualanPanel extends JPanel {
         updateTableKeranjang();
     }
 
+    // Inner class
     class ItemKeranjang {
         String jenis;
         int idItem;
         String namaItem;
         int quantity;
         double harga;
-        double subtotal;
         double hargaBeli;
+        double subtotal;
     }
 }
