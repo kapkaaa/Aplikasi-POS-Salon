@@ -396,7 +396,7 @@ public class PenjualanPanel extends JPanel {
             String sql = "";
             
             if (jenis.equals("Barang")) {
-                sql = "SELECT harga_jual FROM tb_barang WHERE nama_barang = ?";
+                sql = "SELECT harga_jual, harga_beli FROM tb_barang WHERE nama_barang = ?";
             } else {
                 sql = "SELECT harga_layanan FROM tb_layanan WHERE nama_layanan = ?";
             }
@@ -456,10 +456,11 @@ public class PenjualanPanel extends JPanel {
             Connection conn = Koneksi.getKoneksi();
             int idItem = 0;
             double harga = 0;
+            double hargaBeli = 0;
             int stokTersedia = 0;
             
             if (jenis.equals("Barang")) {
-                String sql = "SELECT id_barang, harga_jual, stok FROM tb_barang WHERE nama_barang = ?";
+                String sql = "SELECT id_barang, harga_jual, harga_beli, stok FROM tb_barang WHERE nama_barang = ?";
                 PreparedStatement ps = conn.prepareStatement(sql);
                 ps.setString(1, namaItem);
                 ResultSet rs = ps.executeQuery();
@@ -467,6 +468,7 @@ public class PenjualanPanel extends JPanel {
                 if (rs.next()) {
                     idItem = rs.getInt("id_barang");
                     harga = rs.getDouble("harga_jual");
+                    hargaBeli = rs.getDouble("harga_beli");
                     stokTersedia = rs.getInt("stok");
                     
                     if (quantity > stokTersedia) {
@@ -502,6 +504,7 @@ public class PenjualanPanel extends JPanel {
             item.quantity = quantity;
             item.harga = harga;
             item.subtotal = quantity * harga;
+            item.hargaBeli = hargaBeli;
             
             keranjang.add(item);
             updateTableKeranjang();
@@ -676,14 +679,15 @@ public class PenjualanPanel extends JPanel {
             
             for (ItemKeranjang item : keranjang) {
                 if (item.jenis.equals("Barang")) {
-                    String sqlDetail = "INSERT INTO tb_detail_transaksi_barang (id_transaksi, id_barang, quantity, harga_satuan, subtotal) " +
-                                       "VALUES (?, ?, ?, ?, ?)";
+                    String sqlDetail = "INSERT INTO tb_detail_transaksi_barang (id_transaksi, id_barang, quantity, harga_satuan, harga_beli, subtotal) " +
+                                       "VALUES (?, ?, ?, ?, ?, ?)";
                     PreparedStatement psDetail = conn.prepareStatement(sqlDetail);
                     psDetail.setInt(1, idTransaksi);
                     psDetail.setInt(2, item.idItem);
                     psDetail.setInt(3, item.quantity);
                     psDetail.setDouble(4, item.harga);
-                    psDetail.setDouble(5, item.subtotal);
+                    psDetail.setDouble(5, item.hargaBeli);
+                    psDetail.setDouble(6, item.subtotal);
                     psDetail.executeUpdate();
                     psDetail.close();
                 } else {
@@ -791,5 +795,6 @@ public class PenjualanPanel extends JPanel {
         int quantity;
         double harga;
         double subtotal;
+        double hargaBeli;
     }
 }
