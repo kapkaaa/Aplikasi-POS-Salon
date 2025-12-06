@@ -260,7 +260,7 @@ public class PenjualanPanel extends JPanel {
         btnHapus.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnHapus.addActionListener(e -> hapusItem());
 
-        JButton btnEditQty = new JButton("✏️ Edit Qty");
+        JButton btnEditQty = new JButton("✏️ Edit Quantity");
         btnEditQty.setFont(new Font("Segoe UI", Font.PLAIN, 11));
         btnEditQty.setBackground(new Color(52, 152, 219));
         btnEditQty.setForeground(new Color(52, 152, 219));
