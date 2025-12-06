@@ -13,6 +13,7 @@ import javax.swing.text.*;
 /**
  * Panel Kelola Barang - CRUD dan Manage Stok
  * Versi Responsif, Live Search, Tampilkan ID, Validasi Angka, Satuan Lebar
+ * Telah diperbarui dengan kolom HARGA_BELI
  */
 public class KelolaBarangPanel extends JPanel {
 
@@ -24,7 +25,8 @@ public class KelolaBarangPanel extends JPanel {
 
     // Form components
     private JTextField txtNamaBarang;
-    private JTextField txtHarga;
+    private JTextField txtHargaJual;
+    private JTextField txtHargaBeli; // <-- TAMBAHAN
     private JTextField txtStok;
     private JTextField txtSatuan;
     private JTextArea txtDeskripsi;
@@ -125,7 +127,7 @@ public class KelolaBarangPanel extends JPanel {
         panelKiri.add(headerPanel, BorderLayout.NORTH);
 
         // Tabel Barang
-        String[] columns = {"ID", "Nama Barang", "Kategori", "Harga", "Stok", "Satuan", "Status"};
+        String[] columns = {"ID", "Nama Barang", "Kategori", "Harga Jual", "Harga Beli", "Stok", "Satuan", "Status"};
         modelTable = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -138,30 +140,31 @@ public class KelolaBarangPanel extends JPanel {
         tableBarang.setRowHeight(30);
         tableBarang.getTableHeader().setFont(new Font("Poppins", Font.BOLD, 12));
         tableBarang.getTableHeader().setBackground(new Color(70, 130, 180));
-        tableBarang.getTableHeader().setForeground(new Color(70, 130, 180));
+        tableBarang.getTableHeader().setForeground(new Color(70, 130, 180));    
         tableBarang.setSelectionBackground(new Color(135, 206, 250));
         tableBarang.setSelectionForeground(Color.BLACK);
 
-        // Lebar kolom — ID ditampilkan
+        // Lebar kolom
         tableBarang.getColumnModel().getColumn(0).setPreferredWidth(60);   // ID
         tableBarang.getColumnModel().getColumn(1).setPreferredWidth(200); // Nama
         tableBarang.getColumnModel().getColumn(2).setPreferredWidth(120); // Kategori
-        tableBarang.getColumnModel().getColumn(3).setPreferredWidth(100); // Harga
-        tableBarang.getColumnModel().getColumn(4).setPreferredWidth(80);  // Stok
-        tableBarang.getColumnModel().getColumn(5).setPreferredWidth(90);  // Satuan (sedikit lebih lebar)
-        tableBarang.getColumnModel().getColumn(6).setPreferredWidth(100); // Status
+        tableBarang.getColumnModel().getColumn(3).setPreferredWidth(100); // Harga Jual
+        tableBarang.getColumnModel().getColumn(4).setPreferredWidth(100); // Harga Beli
+        tableBarang.getColumnModel().getColumn(5).setPreferredWidth(80);  // Stok
+        tableBarang.getColumnModel().getColumn(6).setPreferredWidth(90);  // Satuan
+        tableBarang.getColumnModel().getColumn(7).setPreferredWidth(100); // Status
 
         JScrollPane scrollTable = new JScrollPane(tableBarang);
         panelKiri.add(scrollTable, BorderLayout.CENTER);
 
-        // Buttons bawah tabel — lebih besar, warna teks tetap biru tua
+        // Buttons bawah tabel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
         buttonPanel.setBackground(Color.WHITE);
 
         JButton btnEdit = new JButton("✏️ Edit");
         btnEdit.setFont(new Font("Poppins", Font.PLAIN, 14));
         btnEdit.setBackground(new Color(241, 196, 15));
-        btnEdit.setForeground(new Color(70, 130, 180)); // ✅ tetap biru tua
+        btnEdit.setForeground(new Color(70, 130, 180));
         btnEdit.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
         btnEdit.setFocusPainted(false);
         btnEdit.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -172,7 +175,7 @@ public class KelolaBarangPanel extends JPanel {
         JButton btnHapus = new JButton("🗑️ Hapus");
         btnHapus.setFont(new Font("Poppins", Font.PLAIN, 14));
         btnHapus.setBackground(new Color(231, 76, 60));
-        btnHapus.setForeground(new Color(70, 130, 180)); // ✅ tetap biru tua
+        btnHapus.setForeground(new Color(70, 130, 180));
         btnHapus.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
         btnHapus.setFocusPainted(false);
         btnHapus.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -183,7 +186,7 @@ public class KelolaBarangPanel extends JPanel {
         JButton btnRefresh = new JButton("🔄 Refresh");
         btnRefresh.setFont(new Font("Poppins", Font.PLAIN, 14));
         btnRefresh.setBackground(new Color(52, 152, 219));
-        btnRefresh.setForeground(new Color(70, 130, 180)); // ✅ tetap biru tua
+        btnRefresh.setForeground(new Color(70, 130, 180));
         btnRefresh.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
         btnRefresh.setFocusPainted(false);
         btnRefresh.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -221,7 +224,7 @@ public class KelolaBarangPanel extends JPanel {
         lblNama.setForeground(new Color(60, 60, 60));
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 1;
+        gbc.gridwidth = 2;
         formPanel.add(lblNama, gbc);
 
         txtNamaBarang = new JTextField();
@@ -241,7 +244,7 @@ public class KelolaBarangPanel extends JPanel {
         lblKategoriForm.setForeground(new Color(60, 60, 60));
         gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.gridwidth = 1;
+        gbc.gridwidth = 2;
         formPanel.add(lblKategoriForm, gbc);
 
         cmbKategoriForm = new JComboBox<>();
@@ -251,66 +254,87 @@ public class KelolaBarangPanel extends JPanel {
         gbc.gridwidth = 2;
         formPanel.add(cmbKategoriForm, gbc);
 
-        // Harga → HANYA ANGKA
-        JLabel lblHarga = new JLabel("Harga Jual (Rp) *");
-        lblHarga.setFont(new Font("Poppins", Font.PLAIN, 12));
-        lblHarga.setForeground(new Color(60, 60, 60));
+        // Harga Jual
+        JLabel lblHargaJual = new JLabel("Harga Jual (Rp) *");
+        lblHargaJual.setFont(new Font("Poppins", Font.PLAIN, 12));
+        lblHargaJual.setForeground(new Color(60, 60, 60));
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.gridwidth = 1;
-        formPanel.add(lblHarga, gbc);
+        formPanel.add(lblHargaJual, gbc);
 
-        txtHarga = new JTextField();
-        txtHarga.setFont(new Font("Poppins", Font.PLAIN, 12));
-        txtHarga.setDocument(new NumberOnlyDocument()); // 🔒 HANYA ANGKA
-        txtHarga.setBorder(BorderFactory.createCompoundBorder(
+        txtHargaJual = new JTextField();
+        txtHargaJual.setFont(new Font("Poppins", Font.PLAIN, 12));
+        txtHargaJual.setDocument(new NumberOnlyDocument());
+        txtHargaJual.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
             BorderFactory.createEmptyBorder(5, 10, 5, 10)
         ));
         gbc.gridx = 0;
         gbc.gridy = 5;
         gbc.gridwidth = 1;
-        formPanel.add(txtHarga, gbc);
+        formPanel.add(txtHargaJual, gbc);
 
-        // Stok → HANYA ANGKA
+        // Harga Beli ← TAMBAHAN
+        JLabel lblHargaBeli = new JLabel("Harga Beli (Rp) *");
+        lblHargaBeli.setFont(new Font("Poppins", Font.PLAIN, 12));
+        lblHargaBeli.setForeground(new Color(60, 60, 60));
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        gbc.gridwidth = 1;
+        formPanel.add(lblHargaBeli, gbc);
+
+        txtHargaBeli = new JTextField();
+        txtHargaBeli.setFont(new Font("Poppins", Font.PLAIN, 12));
+        txtHargaBeli.setDocument(new NumberOnlyDocument());
+        txtHargaBeli.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
+            BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
+        gbc.gridx = 1;
+        gbc.gridy = 5;
+        gbc.gridwidth = 1;
+        formPanel.add(txtHargaBeli, gbc);
+
+        // Stok
         JLabel lblStok = new JLabel("Stok *");
         lblStok.setFont(new Font("Poppins", Font.PLAIN, 12));
         lblStok.setForeground(new Color(60, 60, 60));
-        gbc.gridx = 1;
-        gbc.gridy = 4;
+        gbc.gridx = 0;
+        gbc.gridy = 6;
         gbc.gridwidth = 1;
         formPanel.add(lblStok, gbc);
 
         txtStok = new JTextField();
         txtStok.setFont(new Font("Poppins", Font.PLAIN, 12));
-        txtStok.setDocument(new NumberOnlyDocument()); // 🔒 HANYA ANGKA
+        txtStok.setDocument(new NumberOnlyDocument());
         txtStok.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
             BorderFactory.createEmptyBorder(5, 10, 5, 10)
         ));
-        gbc.gridx = 1;
-        gbc.gridy = 5;
+        gbc.gridx = 0;
+        gbc.gridy = 7;
         gbc.gridwidth = 1;
         formPanel.add(txtStok, gbc);
 
-        // Satuan → LEBAR CUKUP
+        // Satuan
         JLabel lblSatuan = new JLabel("Satuan *");
         lblSatuan.setFont(new Font("Poppins", Font.PLAIN, 12));
         lblSatuan.setForeground(new Color(60, 60, 60));
-        gbc.gridx = 2;
-        gbc.gridy = 4;
+        gbc.gridx = 1;
+        gbc.gridy = 6;
         gbc.gridwidth = 1;
         formPanel.add(lblSatuan, gbc);
 
         txtSatuan = new JTextField("pcs");
         txtSatuan.setFont(new Font("Poppins", Font.PLAIN, 12));
-        txtSatuan.setColumns(8); // 🔑 Lebar cukup untuk "buah", "kg", dll
+        txtSatuan.setColumns(8);
         txtSatuan.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
             BorderFactory.createEmptyBorder(5, 10, 5, 10)
         ));
-        gbc.gridx = 2;
-        gbc.gridy = 5;
+        gbc.gridx = 1;
+        gbc.gridy = 7;
         gbc.gridwidth = 1;
         formPanel.add(txtSatuan, gbc);
 
@@ -319,14 +343,14 @@ public class KelolaBarangPanel extends JPanel {
         lblStatus.setFont(new Font("Poppins", Font.PLAIN, 12));
         lblStatus.setForeground(new Color(60, 60, 60));
         gbc.gridx = 0;
-        gbc.gridy = 6;
-        gbc.gridwidth = 1;
+        gbc.gridy = 8;
+        gbc.gridwidth = 2;
         formPanel.add(lblStatus, gbc);
 
         cmbStatus = new JComboBox<>(new String[]{"Tersedia", "Habis"});
         cmbStatus.setFont(new Font("Poppins", Font.PLAIN, 12));
         gbc.gridx = 0;
-        gbc.gridy = 7;
+        gbc.gridy = 9;
         gbc.gridwidth = 2;
         formPanel.add(cmbStatus, gbc);
 
@@ -335,8 +359,8 @@ public class KelolaBarangPanel extends JPanel {
         lblDeskripsi.setFont(new Font("Poppins", Font.PLAIN, 12));
         lblDeskripsi.setForeground(new Color(60, 60, 60));
         gbc.gridx = 0;
-        gbc.gridy = 8;
-        gbc.gridwidth = 1;
+        gbc.gridy = 10;
+        gbc.gridwidth = 2;
         formPanel.add(lblDeskripsi, gbc);
 
         txtDeskripsi = new JTextArea(3, 20);
@@ -350,21 +374,21 @@ public class KelolaBarangPanel extends JPanel {
 
         JScrollPane scrollDeskripsi = new JScrollPane(txtDeskripsi);
         gbc.gridx = 0;
-        gbc.gridy = 9;
+        gbc.gridy = 11;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.BOTH;
         formPanel.add(scrollDeskripsi, gbc);
 
         panelKanan.add(formPanel, BorderLayout.CENTER);
 
-        // Buttons bawah form — warna teks tetap biru tua
+        // Buttons bawah form
         JPanel formButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
         formButtonPanel.setBackground(Color.WHITE);
 
         JButton btnSimpan = new JButton("💾 Simpan");
         btnSimpan.setFont(new Font("Poppins", Font.BOLD, 14));
         btnSimpan.setBackground(new Color(46, 204, 113));
-        btnSimpan.setForeground(new Color(70, 130, 180)); // ✅ tetap biru tua
+        btnSimpan.setForeground(new Color(70, 130, 180));
         btnSimpan.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
         btnSimpan.setFocusPainted(false);
         btnSimpan.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -375,7 +399,7 @@ public class KelolaBarangPanel extends JPanel {
         JButton btnBatal = new JButton("❌ Batal");
         btnBatal.setFont(new Font("Poppins", Font.BOLD, 14));
         btnBatal.setBackground(new Color(149, 165, 166));
-        btnBatal.setForeground(new Color(70, 130, 180)); // ✅ tetap biru tua
+        btnBatal.setForeground(new Color(70, 130, 180));
         btnBatal.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
         btnBatal.setFocusPainted(false);
         btnBatal.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -427,7 +451,7 @@ public class KelolaBarangPanel extends JPanel {
 
             Connection conn = Koneksi.getKoneksi();
             StringBuilder sql = new StringBuilder(
-                "SELECT b.id_barang, b.nama_barang, k.nama_kategori, b.harga_jual, " +
+                "SELECT b.id_barang, b.nama_barang, k.nama_kategori, b.harga_jual, b.harga_beli, " +
                 "b.stok, b.satuan, b.status " +
                 "FROM tb_barang b " +
                 "LEFT JOIN tb_kategori_barang k ON b.id_kategori = k.id_kategori " +
@@ -464,6 +488,7 @@ public class KelolaBarangPanel extends JPanel {
                     rs.getString("nama_barang"),
                     rs.getString("nama_kategori"),
                     "Rp " + String.format("%,.0f", rs.getDouble("harga_jual")),
+                    "Rp " + String.format("%,.0f", rs.getDouble("harga_beli")),
                     rs.getInt("stok"),
                     rs.getString("satuan"),
                     rs.getString("status")
@@ -492,9 +517,15 @@ public class KelolaBarangPanel extends JPanel {
             return;
         }
 
-        if (txtHarga.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Harga harus diisi!", "Validasi", JOptionPane.WARNING_MESSAGE);
-            txtHarga.requestFocus();
+        if (txtHargaJual.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Harga jual harus diisi!", "Validasi", JOptionPane.WARNING_MESSAGE);
+            txtHargaJual.requestFocus();
+            return;
+        }
+
+        if (txtHargaBeli.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Harga beli harus diisi!", "Validasi", JOptionPane.WARNING_MESSAGE);
+            txtHargaBeli.requestFocus();
             return;
         }
 
@@ -505,11 +536,17 @@ public class KelolaBarangPanel extends JPanel {
         }
 
         try {
-            double harga = Double.parseDouble(txtHarga.getText().trim());
+            double hargaJual = Double.parseDouble(txtHargaJual.getText().trim());
+            double hargaBeli = Double.parseDouble(txtHargaBeli.getText().trim());
             int stok = Integer.parseInt(txtStok.getText().trim());
 
-            if (harga <= 0) {
-                JOptionPane.showMessageDialog(this, "Harga harus lebih dari 0!", "Validasi", JOptionPane.WARNING_MESSAGE);
+            if (hargaJual <= 0) {
+                JOptionPane.showMessageDialog(this, "Harga jual harus lebih dari 0!", "Validasi", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (hargaBeli <= 0) {
+                JOptionPane.showMessageDialog(this, "Harga beli harus lebih dari 0!", "Validasi", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
@@ -533,33 +570,35 @@ public class KelolaBarangPanel extends JPanel {
             psKategori.close();
 
             if (idBarangEdit == -1) {
-                String sql = "INSERT INTO tb_barang (id_kategori, nama_barang, harga_jual, stok, satuan, deskripsi, status) " +
-                             "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                String sql = "INSERT INTO tb_barang (id_kategori, nama_barang, harga_jual, harga_beli, stok, satuan, deskripsi, status) " +
+                             "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                 PreparedStatement ps = conn.prepareStatement(sql);
                 ps.setInt(1, idKategori);
                 ps.setString(2, txtNamaBarang.getText().trim());
-                ps.setDouble(3, harga);
-                ps.setInt(4, stok);
-                ps.setString(5, txtSatuan.getText().trim());
-                ps.setString(6, txtDeskripsi.getText().trim());
-                ps.setString(7, (String) cmbStatus.getSelectedItem());
+                ps.setDouble(3, hargaJual);
+                ps.setDouble(4, hargaBeli);
+                ps.setInt(5, stok);
+                ps.setString(6, txtSatuan.getText().trim());
+                ps.setString(7, txtDeskripsi.getText().trim());
+                ps.setString(8, (String) cmbStatus.getSelectedItem());
 
                 ps.executeUpdate();
                 ps.close();
 
                 JOptionPane.showMessageDialog(this, "Barang berhasil ditambahkan!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                String sql = "UPDATE tb_barang SET id_kategori=?, nama_barang=?, harga_jual=?, stok=?, " +
+                String sql = "UPDATE tb_barang SET id_kategori=?, nama_barang=?, harga_jual=?, harga_beli=?, stok=?, " +
                              "satuan=?, deskripsi=?, status=? WHERE id_barang=?";
                 PreparedStatement ps = conn.prepareStatement(sql);
                 ps.setInt(1, idKategori);
                 ps.setString(2, txtNamaBarang.getText().trim());
-                ps.setDouble(3, harga);
-                ps.setInt(4, stok);
-                ps.setString(5, txtSatuan.getText().trim());
-                ps.setString(6, txtDeskripsi.getText().trim());
-                ps.setString(7, (String) cmbStatus.getSelectedItem());
-                ps.setInt(8, idBarangEdit);
+                ps.setDouble(3, hargaJual);
+                ps.setDouble(4, hargaBeli);
+                ps.setInt(5, stok);
+                ps.setString(6, txtSatuan.getText().trim());
+                ps.setString(7, txtDeskripsi.getText().trim());
+                ps.setString(8, (String) cmbStatus.getSelectedItem());
+                ps.setInt(9, idBarangEdit);
 
                 ps.executeUpdate();
                 ps.close();
@@ -599,8 +638,8 @@ public class KelolaBarangPanel extends JPanel {
             if (rs.next()) {
                 txtNamaBarang.setText(rs.getString("nama_barang"));
                 cmbKategoriForm.setSelectedItem(rs.getString("nama_kategori"));
-                double harga = rs.getDouble("harga_jual");
-                txtHarga.setText(String.valueOf((int) harga));
+                txtHargaJual.setText(String.valueOf((int) rs.getDouble("harga_jual")));
+                txtHargaBeli.setText(String.valueOf((int) rs.getDouble("harga_beli")));
                 txtStok.setText(String.valueOf(rs.getInt("stok")));
                 txtSatuan.setText(rs.getString("satuan"));
                 txtDeskripsi.setText(rs.getString("deskripsi"));
@@ -653,12 +692,13 @@ public class KelolaBarangPanel extends JPanel {
         idBarangEdit = -1;
         txtNamaBarang.setText("");
         cmbKategoriForm.setSelectedIndex(0);
-        txtHarga.setText("");
+        txtHargaJual.setText("");
+        txtHargaBeli.setText(""); // <-- bersihkan
         txtStok.setText("");
         txtSatuan.setText("pcs");
         txtDeskripsi.setText("");
         cmbStatus.setSelectedIndex(0);
         txtNamaBarang.requestFocus();
-        txtCari.setText("");
+        // Opsional: tidak reset txtCari agar pencarian tetap
     }
 }
